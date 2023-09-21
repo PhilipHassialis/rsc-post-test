@@ -1,21 +1,29 @@
-import { authOptions } from "@/libs/authOptions";
-import { getServerSession } from "next-auth";
+"use client";
 
-const Page1 = async () => {
-  const session = await getServerSession(authOptions);
+import { useEffect, useState } from "react";
 
-  if (!session) {
-    return (
-      <div>
-        <h1>Not Logged In</h1>
-      </div>
-    );
-  }
+const Page1 = () => {
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    const fetchMessage = async () => {
+      const messageRes = await fetch("http://localhost:3000/api/demopost", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const message = await messageRes.json();
+      setMessage(message.message);
+    };
+    if (message === "") {
+      fetchMessage();
+    }
+  }, []);
 
   return (
     <div>
       <h1>Welcome Page1</h1>
-      <h2>{JSON.stringify(session)}</h2>
+      <h2>{`Message: ${message}`}</h2>
     </div>
   );
 };
